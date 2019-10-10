@@ -5,7 +5,7 @@
 
 # Definitions.
 CC = avr-gcc
-CFLAGS = -mmcu=atmega32u2 -Os -Wall -Wstrict-prototypes -Wextra -g -I. -I../../utils -I../../fonts -I../../drivers -I../../drivers/avr
+CFLAGS = -mmcu=atmega32u2 -Os -Wall -Wstrict-prototypes -Wextra -g -I. -I../../utils -I../../fonts -I../../drivers -I../../drivers/avr -I../../extra
 OBJCOPY = avr-objcopy
 SIZE = avr-size
 DEL = rm
@@ -16,7 +16,7 @@ all: game.out
 
 
 # Compile: create object files from C source files.
-game.o: game.c ../../drivers/avr/eeprom.h ../../drivers/avr/pio.h ../../drivers/avr/system.h ../../drivers/avr/timer.h ../../drivers/display.h ../../drivers/led.h ../../drivers/navswitch.h ../../extra/mmelody.h ../../extra/ticker.h ../../extra/tweeter.h ../../fonts/font3x5_1.h ../../utils/font.h ../../utils/task.h ../../utils/tinygl.h ../../utils/uint8toa.h
+game.o: game.c ../../drivers/avr/eeprom.h ../../drivers/avr/pio.h ../../drivers/avr/system.h ../../drivers/avr/timer.h ../../drivers/display.h ../../drivers/led.h ../../drivers/navswitch.h ../../extra/mmelody.h ../../extra/ticker.h ../../extra/tweeter.h ../../fonts/font3x5_1.h ../../utils/font.h ../../utils/task.h ../../utils/tinygl.h ../../utils/uint8toa.h ../../utils/pacer.h
 	$(CC) -c $(CFLAGS) $< -o $@
 
 eeprom.o: ../../drivers/avr/eeprom.c ../../drivers/avr/eeprom.h ../../drivers/avr/system.h
@@ -62,6 +62,9 @@ tinygl.o: ../../utils/tinygl.c ../../drivers/avr/system.h ../../drivers/display.
 	$(CC) -c $(CFLAGS) $< -o $@
 
 uint8toa.o: ../../utils/uint8toa.c ../../drivers/avr/system.h
+	$(CC) -c $(CFLAGS) $< -o $@
+
+pacer.o: ../../utils/pacer.c ../../drivers/avr/system.h ../../drivers/avr/timer.h ../../utils/pacer.h
 	$(CC) -c $(CFLAGS) $< -o $@
 
 
