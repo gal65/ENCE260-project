@@ -5,7 +5,7 @@
 
 # Definitions.
 CC = avr-gcc
-CFLAGS = -mmcu=atmega32u2 -Os -Wall -Wstrict-prototypes -Wextra -g -I. -I../../utils -I../../fonts -I../../drivers -I../../drivers/avr -I../../extra
+CFLAGS = -mmcu=atmega32u2 -Os -Wall -Wstrict-prototypes -Wextra -g -I. -I../../utils -I../../fonts -I../../drivers -I../../drivers/avr -I../../extra -I../..assignment/final
 OBJCOPY = avr-objcopy
 SIZE = avr-size
 DEL = rm
@@ -16,7 +16,7 @@ all: game.out
 
 
 # Compile: create object files from C source files.
-game.o: game.c ../../drivers/avr/eeprom.h ../../drivers/avr/pio.h ../../drivers/avr/system.h ../../drivers/avr/timer.h ../../drivers/display.h ../../drivers/led.h ../../drivers/navswitch.h ../../extra/mmelody.h ../../extra/ticker.h ../../extra/tweeter.h ../../fonts/font3x5_1.h ../../utils/font.h ../../utils/task.h ../../utils/tinygl.h ../../utils/uint8toa.h ../../utils/pacer.h
+game.o: game.c ../../drivers/avr/eeprom.h ../../drivers/avr/pio.h ../../drivers/avr/system.h ../../drivers/avr/timer.h ../../drivers/display.h ../../drivers/led.h ../../drivers/navswitch.h ../../extra/mmelody.h ../../extra/ticker.h ../../extra/tweeter.h ../../fonts/font3x5_1.h ../../utils/font.h ../../utils/task.h ../../utils/tinygl.h ../../utils/uint8toa.h ../../utils/pacer.h ../../drivers/button.h ../../drivers/ir_serial.h ../../drivers/ir.h ../../assignment/final/move.h
 	$(CC) -c $(CFLAGS) $< -o $@
 
 eeprom.o: ../../drivers/avr/eeprom.c ../../drivers/avr/eeprom.h ../../drivers/avr/system.h
@@ -67,11 +67,24 @@ uint8toa.o: ../../utils/uint8toa.c ../../drivers/avr/system.h
 pacer.o: ../../utils/pacer.c ../../drivers/avr/system.h ../../drivers/avr/timer.h ../../utils/pacer.h
 	$(CC) -c $(CFLAGS) $< -o $@
 
+button.o: ../../drivers/button.c ../../drivers/avr/pio.h ../../drivers/avr/system.h ../../drivers/button.h
+	$(CC) -c $(CFLAGS) $< -o $@
+
+ir.o: ../../drivers/ir.c ../../drivers/avr/delay.h ../../drivers/avr/pio.h ../../drivers/avr/system.h ../../drivers/ir.h
+	$(CC) -c $(CFLAGS) $< -o $@
+
+ir_serial.o: ../../drivers/ir_serial.c ../../drivers/avr/delay.h ../../drivers/avr/system.h ../../drivers/ir.h ../../drivers/ir_serial.h
+	$(CC) -c $(CFLAGS) $< -o $@
+
+move.o: ../../assignment/final/move.c ../../utils/tinygl.h ../../drivers/navswitch.h ../../utils/uint8toa.h ../../utils/pacer.h ../../drivers/avr/system.h ../../assignment/final/move.h
+	$(CC) -c $(CFLAGS) $< -o $@
+
+
 
 
 # Link: create ELF output file from object files.
 # Link: create output file (executable) from object files.
-game.out: game.o eeprom.o pio.o system.o timer.o display.o led.o ledmat.o navswitch.o mmelody.o ticker.o tweeter.o font.o task.o tinygl.o uint8toa.o pacer.o
+game.out: game.o eeprom.o pio.o system.o timer.o display.o led.o ledmat.o navswitch.o mmelody.o ticker.o tweeter.o font.o task.o tinygl.o uint8toa.o pacer.o button.o ir.o ir_serial.o move.o
 	$(CC) $(CFLAGS) $^ -o $@ -lm
 	$(SIZE) $@
 
