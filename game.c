@@ -1,3 +1,11 @@
+/** @file   game.c
+    @author Gordon Lay and Henry Mossman
+    @date   17/10/2019
+    @brief  A simple ball catching game
+
+    @defgroup game A simple ball catching game.
+*/
+
 #include <string.h>
 #include "system.h"
 #include "tinygl.h"
@@ -18,12 +26,13 @@
 #include "move.h"
 
 #define PACER_RATE 500
-#define MESSAGE_RATE 20
+#define MESSAGE_RATE 25
+#define ready_char 'z'
 
-//Ready pending bool
+//Ready pending boolean
 static _Bool ready;
 
-//Initialise the ready bool to false
+//Initialise the ready boolean to false
 static void ready_screen_init(void)
 {
     ready = false;
@@ -35,7 +44,7 @@ static void ready_screen_task(void)
     ready = true;
 }
 
-//Initialising tinygl to scroll and rotate
+//Initialising tinygl font, speed, scroll and rotate settings
 static void tinygl_task_init(void)
 {
     tinygl_font_set(&font3x5_1);
@@ -48,33 +57,49 @@ static void tinygl_task_init(void)
 static void show_err (uint8_t err)
 {
     char buffer[3];
-
     buffer[0] = 'E';
     buffer[1] = err + '0';
     buffer[2] = 0;
     tinygl_text (buffer);
 }
 
-//Ready-state loop; shows message READY? while sending and checking for
-//1's transmitted via serial ir
+//Ready-state loop; shows message 'READY?' while sending and checking
+//for 1's transmitted via serial ir
 static void ready_loop (void)
 {
+    uint16_t errorTime = 0;
     tinygl_clear();
     tinygl_text("READY?");
-    ir_serial_transmit (1);
-    while (1) {
+    //Signal to other funkit that this funkit is ready
+    ir_serial_transmit (ready_char);
+    while (1)
+    {
         uint8_t data;
         pacer_wait();
         tinygl_update();
+        //Receive serial ir signals
         ir_serial_ret_t ret;
         ret = ir_serial_receive (&data);
+        //If the ir signal is ok and it is the ready character,
+        //return to main
         if (ret == IR_SERIAL_OK) {
-            if (data == 1) {
-                ir_serial_transmit (1);
+            if (data == ready_char) {
+                ir_serial_transmit (ready_char);
                 return;
             }
+            //else diplay error code for some time, then return to the
+            //top of main
         } else if (ret < 0) {
+            tinygl_clear();
             show_err (-ret);
+            while(1) {
+                pacer_wait();
+                tinygl_update();
+                errorTime++;
+                if (errorTime >= 1800) {
+                    main();
+                }
+            }
         }
     }
 }
@@ -82,6 +107,7 @@ static void ready_loop (void)
 //The game function
 static void game (void)
 {
+    //Start with loading the move function
     move();
 }
 
@@ -110,6 +136,7 @@ int main (void)
             ready_loop();
             //When both players are ready, start the game
             tinygl_clear();
+            uint16_t startTime = 0;
             tinygl_text("GAME START!");
             game();
         }

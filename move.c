@@ -1,9 +1,19 @@
+/** @file   move.c
+    @author Gordon Lay and Henry Mossman
+    @date   17/10/2019
+    @brief  Helper module for player movement
+
+    @defgroup move Helper module for player movement
+*/
+
 #include "tinygl.h"
 #include "navswitch.h"
 #include "uint8toa.h"
 #include "pacer.h"
 #include <avr/io.h>
 #include "system.h"
+
+#define PACER_RATE_MOVE 1000
 
 void moveRight(uint8_t count)
 {
@@ -42,8 +52,8 @@ void moveLeft(uint8_t count)
 int move(void)
 {
     system_init ();
-    tinygl_init (1000);
-    pacer_init (1000);
+    tinygl_init (PACER_RATE_MOVE);
+    pacer_init (PACER_RATE_MOVE);
     uint8_t count = 3;
     tinygl_coord_t x = 4;
     tinygl_coord_t y = 3; // player starting point
@@ -115,5 +125,6 @@ int move(void)
             count ++;
         }
     }
+    //Return count for future use
     return count;
 }
