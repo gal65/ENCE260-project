@@ -1,11 +1,11 @@
 # File:   Makefile
 # Author: M. P. Hayes, UCECE
-# Date:   12 Sep 2010
-# Descr:  Makefile for game
+# Date:   17 October 2019
+# Descr:  Makefile for game by Gordon Lay and Henry Mossman
 
 # Definitions.
 CC = avr-gcc
-CFLAGS = -mmcu=atmega32u2 -Os -Wall -Wstrict-prototypes -Wextra -g -I. -I../../utils -I../../fonts -I../../drivers -I../../drivers/avr -I../../extra -I../..assignment/final
+CFLAGS = -mmcu=atmega32u2 -Os -Wall -Wstrict-prototypes -Wextra -g -I. -I../../utils -I../../fonts -I../../drivers -I../../drivers/avr -I../../extra -I../../assignment/final
 OBJCOPY = avr-objcopy
 SIZE = avr-size
 DEL = rm
@@ -16,7 +16,7 @@ all: game.out
 
 
 # Compile: create object files from C source files.
-game.o: game.c ../../drivers/avr/eeprom.h ../../drivers/avr/pio.h ../../drivers/avr/system.h ../../drivers/avr/timer.h ../../drivers/display.h ../../drivers/led.h ../../drivers/navswitch.h ../../extra/mmelody.h ../../extra/ticker.h ../../extra/tweeter.h ../../fonts/font3x5_1.h ../../utils/font.h ../../utils/task.h ../../utils/tinygl.h ../../utils/uint8toa.h ../../utils/pacer.h ../../drivers/button.h ../../drivers/ir_serial.h ../../drivers/ir.h ../../assignment/final/move.h
+game.o: game.c ../../drivers/avr/eeprom.h ../../drivers/avr/pio.h ../../drivers/avr/system.h ../../drivers/avr/timer.h ../../drivers/display.h ../../drivers/led.h ../../drivers/navswitch.h ../../extra/mmelody.h ../../extra/ticker.h ../../extra/tweeter.h ../../fonts/font3x5_1.h ../../utils/font.h ../../utils/task.h ../../utils/tinygl.h ../../utils/uint8toa.h ../../utils/pacer.h ../../drivers/button.h ../../drivers/ir_serial.h ../../drivers/ir.h ../../assignment/final/throwing.h ../../assignment/final/throwBall.h ../../assignment/final/catchBall.h
 	$(CC) -c $(CFLAGS) $< -o $@
 
 eeprom.o: ../../drivers/avr/eeprom.c ../../drivers/avr/eeprom.h ../../drivers/avr/system.h
@@ -76,15 +76,18 @@ ir.o: ../../drivers/ir.c ../../drivers/avr/delay.h ../../drivers/avr/pio.h ../..
 ir_serial.o: ../../drivers/ir_serial.c ../../drivers/avr/delay.h ../../drivers/avr/system.h ../../drivers/ir.h ../../drivers/ir_serial.h
 	$(CC) -c $(CFLAGS) $< -o $@
 
-move.o: ../../assignment/final/move.c ../../utils/tinygl.h ../../drivers/navswitch.h ../../utils/uint8toa.h ../../utils/pacer.h ../../drivers/avr/system.h ../../assignment/final/move.h
+throwing.o: ../../assignment/final/throwing.c ../../utils/tinygl.h ../../drivers/navswitch.h ../../utils/uint8toa.h ../../utils/pacer.h ../../drivers/avr/system.h ../../assignment/final/throwing.h
 	$(CC) -c $(CFLAGS) $< -o $@
 
+throwBall.o: ../../assignment/final/throwBall.c ../../drivers/navswitch.h ../../drivers/avr/pio.h ../../utils/uint8toa.h ../../utils/pacer.h ../../drivers/avr/system.h ../../assignment/final/throwBall.h
+	$(CC) -c $(CFLAGS) $< -o $@
 
-
+catchBall.o: ../../assignment/final/catchBall.c ../../drivers/navswitch.h ../../drivers/avr/pio.h ../../utils/uint8toa.h ../../utils/pacer.h ../../drivers/avr/system.h ../../assignment/final/catchBall.h
+	$(CC) -c $(CFLAGS) $< -o $@
 
 # Link: create ELF output file from object files.
 # Link: create output file (executable) from object files.
-game.out: game.o eeprom.o pio.o system.o timer.o display.o led.o ledmat.o navswitch.o mmelody.o ticker.o tweeter.o font.o task.o tinygl.o uint8toa.o pacer.o button.o ir.o ir_serial.o move.o
+game.out: game.o eeprom.o pio.o system.o timer.o display.o led.o ledmat.o navswitch.o mmelody.o ticker.o tweeter.o font.o task.o tinygl.o uint8toa.o pacer.o button.o ir.o ir_serial.o throwing.o throwBall.o catchBall.o
 	$(CC) $(CFLAGS) $^ -o $@ -lm
 	$(SIZE) $@
 
